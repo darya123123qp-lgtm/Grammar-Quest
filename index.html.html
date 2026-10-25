@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Quest: Time Portal — Phygital Visual Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #09060d radial-gradient(circle at center, #1e1329 0%, #08040b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Gold-Bronze Fantasy Frame & Glows */
+        .bronze-frame {
+            background: linear-gradient(145deg, #2a1f18 0%, #150f0b 100%);
+            border: 2px solid #b4833e;
+            box-shadow: inset 0 0 15px rgba(180, 131, 62, 0.2), 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+        .gold-border {
+            border-color: #d4af37;
+        }
+        .gold-text {
+            background: linear-gradient(135deg, #fff3a1 0%, #d4af37 50%, #aa7c11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Concentric Rings Visual Setup */
+        .ring-outer {
+            width: 320px;
+            height: 320px;
+            border: 3px solid #10b981;
+            background: radial-gradient(circle, rgba(16,185,129,0.05) 0%, rgba(6,78,59,0.2) 100%);
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        .ring-middle {
+            width: 230px;
+            height: 230px;
+            border: 3px solid #f59e0b;
+            background: radial-gradient(circle, rgba(245,158,11,0.05) 0%, rgba(120,53,15,0.25) 100%);
+            box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+        .ring-inner {
+            width: 140px;
+            height: 140px;
+            border: 3px solid #a855f7;
+            background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, rgba(88,28,135,0.3) 100%);
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .portal-core {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #06b6d4 0%, #3b82f6 60%, #1e1b4b 100%);
+            box-shadow: 0 0 25px #06b6d4, inset 0 0 15px #ffffff;
+            animation: portalPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes portalPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px #06b6d4; }
+            50% { transform: scale(1.1); box-shadow: 0 0 35px #a855f7, 0 0 50px #06b6d4; }
+        }
+
+        /* 3D Dice Roll Effect */
+        @keyframes diceSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.2); }
+            50% { transform: rotate(180deg) scale(0.9); }
+            75% { transform: rotate(270deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .rolling-dice {
+            animation: diceSpin 0.2s infinite linear;
+        }
+
+        /* Radial Node Styling */
+        .node-cell {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+        .pawn-active {
+            box-shadow: 0 0 15px #ffffff, 0 0 25px #06b6d4;
+            transform: translate(-50%, -50%) scale(1.6) !important;
+            z-index: 30;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center">
+
+    <!-- Header Frame -->
+    <header class="w-full max-w-5xl bronze-frame rounded-2xl p-6 mb-6 flex flex-col md:flex-row justify-between items-center relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-amber-500 text-9xl">
+            <i class="fa-solid fa-compass"></i>
+        </div>
+        <div>
+            <h1 class="font-cinzel text-2xl md:text-3xl font-black gold-text tracking-wider">
+                GRAMMAR QUEST: TIME PORTAL
+            </h1>
+            <p class="text-xs text-amber-200/70 mt-1 uppercase tracking-widest font-semibold">
+                Phygital Board Replica • Regional Stage "Zerde"
+            </p>
+        </div>
+        <div class="flex items-center gap-4 mt-4 md:mt-0 z-10">
+            <div class="flex items-center gap-2 bg-amber-950/60 border border-amber-500/40 px-4 py-2 rounded-xl">
+                <i class="fa-solid fa-gem text-amber-400 animate-pulse"></i>
+                <span class="text-xs text-amber-100">Time Crystals:</span>
+                <span id="crystal-count" class="font-cinzel font-bold text-amber-300 text-base">0</span>
+            </div>
+            <button onclick="toggleHelpModal()" class="bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 border border-amber-400/50 px-4 py-2 rounded-xl text-xs font-semibold shadow-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-scroll"></i> Help Cards
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Board Area -->
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 cols: Concentric Board Canvas Visualizer -->
+        <div class="lg:col-span-7 bronze-frame rounded-2xl p-6 flex flex-col items-center justify-between relative min-h-[480px]">
+            
+            <div class="w-full flex justify-between items-center mb-2 z-10">
+                <span class="text-xs font-cinzel font-bold uppercase tracking-wider text-amber-300/80">
+                    <i class="fa-solid fa-circle-notch text-amber-400"></i> Concentric Map
+                </span>
+                <span id="current-zone-badge" class="text-xs font-cinzel px-3 py-1 rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-500/40">
+                    Past Simple Era
+                </span>
+            </div>
+
+            <!-- Concentric Radial Board Representation -->
+            <div class="relative flex items-center justify-center my-6 py-4">
+                
+                <!-- Outer Ring: Past Simple (1–15) -->
+                <div class="ring-outer rounded-full relative flex items-center justify-center">
+                    <!-- Middle Ring: Present Simple (16–30) -->
+                    <div class="ring-middle rounded-full relative flex items-center justify-center">
+                        <!-- Inner Ring: Future Simple (31–44) -->
+                        <div class="ring-inner rounded-full relative flex items-center justify-center">
+                            <!-- Center Portal: Finish (45) -->
+                            <div class="portal-core rounded-full flex items-center justify-center text-center text-[10px] font-cinzel font-bold text-white uppercase tracking-tighter">
+                                Portal
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamically placed Node Cells (1..45) -->
+                <div id="nodes-container" class="absolute inset-0 pointer-events-none"></div>
+
+            </div>
+
+            <!-- Dice Controls Bar -->
+            <div class="w-full bg-amber-950/40 border border-amber-500/30 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 z-10">
+                <div class="flex items-center gap-3">
+                    <div id="dice-box" class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-amber-400/60 flex items-center justify-center text-2xl font-cinzel font-bold shadow-lg text-amber-100">
+                        <i class="fa-solid fa-dice-five"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-amber-200/60">Position:</p>
+                        <p class="font-cinzel font-bold text-amber-300 text-sm">Space <span id="player-pos">1</span> / 45</p>
+                    </div>
+                </div>
+
+                <button id="roll-btn" onclick="rollAndMove()" class="w-full sm:w-auto bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-cinzel font-bold px-6 py-3 rounded-xl shadow-lg shadow-amber-500/20 border border-amber-300 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-dice-d6"></i> Roll Dice
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Right 5 cols: Mission Log & Quick Reference -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Log Status -->
+            <div class="bronze-frame rounded-2xl p-5">
+                <h2 class="font-cinzel text-xs font-bold uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-half"></i> Quest Log
+                </h2>
+                <div id="status-text" class="text-xs text-amber-100/80 bg-amber-950/40 p-3 rounded-xl border border-amber-800/50 leading-relaxed">
+                    Welcome cadet! Press <b>"Roll Dice"</b> to travel across the concentric time zones.
+                </div>
+            </div>
+
+            <!-- Era Legend -->
+            <div class="bronze-frame rounded-2xl p-5">
+                <h3 class="font-cinzel text-xs font-bold text-amber-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-map"></i> Era Zones
+                </h3>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
+                        <span>1–15: Past Simple Era</span>
+                        <i class="fa-solid fa-tree"></i>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-amber-950/40 border border-amber-500/30 text-amber-300">
+                        <span>16–30: Present Simple Era</span>
+                        <i class="fa-solid fa-chess-rook"></i>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-purple-950/40 border border-purple-500/30 text-purple-300">
+                        <span>31–44: Future Simple Era</span>
+                        <i class="fa-solid fa-city"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Formulas -->
+            <div class="bronze-frame rounded-2xl p-5 flex-1">
+                <h3 class="font-cinzel text-xs font-bold text-amber-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> Formula Scrolls
+                </h3>
+                <div class="space-y-2.5 text-xs text-amber-100/80">
+                    <div class="p-2.5 bg-amber-950/30 rounded-xl border border-amber-800/40">
+                        <span class="font-bold text-emerald-400 block mb-0.5">Past Simple:</span>
+                        <span class="text-[11px] font-mono">(+) V2/ed | (-) didn't + V1 | (?) Did + S + V1?</span>
+                    </div>
+                    <div class="p-2.5 bg-amber-950/30 rounded-xl border border-amber-800/40">
+                        <span class="font-bold text-amber-400 block mb-0.5">Present Simple:</span>
+                        <span class="text-[11px] font-mono">(+) V(s) | (-) don't/doesn't + V1 | (?) Do/Does + S + V1?</span>
+                    </div>
+                    <div class="p-2.5 bg-amber-950/30 rounded-xl border border-amber-800/40">
+                        <span class="font-bold text-purple-400 block mb-0.5">Future Simple:</span>
+                        <span class="text-[11px] font-mono">(+) will + V1 | (-) won't + V1 | (?) Will + S + V1?</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Sentence Popup Modal -->
+    <div id="challenge-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="bronze-frame rounded-2xl max-w-lg w-full p-6 relative">
+            
+            <div class="flex justify-between items-center mb-4">
+                <span id="modal-era-badge" class="text-xs font-cinzel px-3 py-1 rounded-full bg-amber-900/60 text-amber-300 border border-amber-500/40">
+                    Past Simple Era
+                </span>
+                <span class="text-xs text-amber-200/60 font-mono"><i class="fa-solid fa-scroll"></i> Challenge Popup</span>
+            </div>
+
+            <h3 class="font-cinzel text-base font-bold gold-text mb-2" id="modal-task-title">
+                Grammar Challenge
+            </h3>
+
+            <div class="bg-amber-950/60 p-4 rounded-xl border border-amber-800/60 mb-4 text-xs space-y-2">
+                <p id="modal-prompt-verb" class="text-amber-100">Target Verb: <span class="font-bold text-amber-300">PLAY</span></p>
+                <p id="modal-prompt-type" class="text-amber-100">Sentence Type: <span class="font-bold text-amber-400">Negative (-)</span></p>
+                <p id="modal-prompt-instruction" class="text-amber-200/60 italic">Compose a correct English sentence matching the era!</p>
+            </div>
+
+            <!-- Input area -->
+            <div class="mb-4">
+                <label for="user-sentence" class="block text-xs text-amber-200/60 mb-1">Your Sentence Input:</label>
+                <input type="text" id="user-sentence" placeholder="Type your sentence here..." class="w-full bg-black/60 border border-amber-700/60 rounded-xl px-4 py-3 text-sm text-amber-100 focus:outline-none focus:border-amber-400 transition" autocomplete="off">
+            </div>
+
+            <!-- Check Result output -->
+            <div id="answer-feedback" class="hidden mb-4 p-3 rounded-xl text-xs"></div>
+
+            <div class="flex gap-3">
+                <button onclick="submitSentence()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Answer
+                </button>
+                <button onclick="revealSample()" class="bg-amber-950 hover:bg-amber-900 text-amber-200 font-semibold px-4 py-2.5 rounded-xl border border-amber-800 transition text-xs">
+                    Show Sample
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="bronze-frame rounded-2xl max-w-xl w-full p-6 relative max-h-[85vh] overflow-y-auto">
+            <button onclick="toggleHelpModal()" class="absolute top-4 right-4 text-amber-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h2 class="font-cinzel text-base font-bold gold-text mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-book-open"></i> Help Cards & Guidelines
+            </h2>
+            
+            <div class="space-y-4 text-xs text-amber-100/80 leading-relaxed">
+                <div class="p-3 bg-amber-950/40 rounded-xl border border-amber-800/50">
+                    <h4 class="font-bold text-amber-300 mb-1">Concentric Track Mechanics:</h4>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li><b>Outer Ring (Green):</b> Past Simple Era (Spaces 1–15).</li>
+                        <li><b>Middle Ring (Yellow):</b> Present Simple Era (Spaces 16–30).</li>
+                        <li><b>Inner Ring (Purple):</b> Future Simple Era (Spaces 31–44).</li>
+                        <li><b>Central Core:</b> TIME PORTAL (Space 45).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="toggleHelpModal()" class="bg-amber-800 hover:bg-amber-700 text-amber-100 px-5 py-2 rounded-xl text-xs font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Engine -->
+    <script>
+        let playerPosition = 1;
+        let crystals = 0;
+        let isMoving = false;
+        let currentChallenge = null;
+
+        const verbs = [
+            { v1: "play", v2: "played", samplePast: "They played football yesterday.", samplePresent: "They play football every day.", sampleFuture: "They will play football tomorrow." },
+            { v1: "read", v2: "read", samplePast: "She read an interesting book.", samplePresent: "She reads books every night.", sampleFuture: "She will read a book tomorrow." },
+            { v1: "drink", v2: "drank", samplePast: "He drank milk yesterday morning.", samplePresent: "He drinks tea in the morning.", sampleFuture: "He will drink water later." },
+            { v1: "go", v2: "went", samplePast: "We went to the park yesterday.", samplePresent: "We go to school every day.", sampleFuture: "We will go home soon." },
+            { v1: "sleep", v2: "slept", samplePast: "The cat slept on the sofa.", samplePresent: "The cat sleeps during the day.", sampleFuture: "The cat will sleep tonight." }
+        ];
+
+        const types = [
+            { sign: "+", name: "Positive (+)" },
+            { sign: "-", name: "Negative (-)" },
+            { sign: "?", name: "Question (?)" }
+        ];
+
+        const diceIcons = ['one','two','three','four','five','six'];
+
+        // Render nodes on radial concentric circles
+        function renderBoard() {
+            const container = document.getElementById('nodes-container');
+            container.innerHTML = '';
+
+            const center = 160; // relative center in px
+
+            for (let i = 1; i <= 45; i++) {
+                let radius = 140; // outer
+                let eraColor = "bg-emerald-500 border-emerald-300 text-emerald-950";
+                let angle = 0;
+
+                if (i <= 15) {
+                    radius = 140;
+                    angle = ((i - 1) / 15) * 2 * Math.PI - Math.PI / 2;
+                    eraColor = "bg-emerald-600 border-emerald-300 text-white";
+                } else if (i <= 30) {
+                    radius = 100;
+                    angle = ((i - 16) / 15) * 2 * Math.PI - Math.PI / 2;
+                    eraColor = "bg-amber-500 border-amber-200 text-amber-950";
+                } else if (i <= 44) {
+                    radius = 60;
+                    angle = ((i - 31) / 14) * 2 * Math.PI - Math.PI / 2;
+                    eraColor = "bg-purple-600 border-purple-300 text-white";
+                } else {
+                    radius = 0;
+                    eraColor = "bg-cyan-400 border-white text-slate-950";
+                }
+
+                const x = center + radius * Math.cos(angle);
+                const y = center + radius * Math.sin(angle);
+
+                const node = document.createElement('div');
+                node.className = `node-cell ${eraColor} ${i === playerPosition ? 'pawn-active' : ''}`;
+                node.style.left = `${x}px`;
+                node.style.top = `${y}px`;
+                node.innerText = i === 45 ? '★' : i;
+
+                container.appendChild(node);
+            }
+
+            document.getElementById('player-pos').innerText = playerPosition;
+            const badge = document.getElementById('current-zone-badge');
+
+            if (playerPosition <= 15) {
+                badge.className = "text-xs font-cinzel px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-500/40";
+                badge.innerText = "Past Simple Era";
+            } else if (playerPosition <= 30) {
+                badge.className = "text-xs font-cinzel px-3 py-1 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/40";
+                badge.innerText = "Present Simple Era";
+            } else if (playerPosition < 45) {
+                badge.className = "text-xs font-cinzel px-3 py-1 rounded-full bg-purple-950/60 text-purple-300 border border-purple-500/40";
+                badge.innerText = "Future Simple Era";
+            } else {
+                badge.className = "text-xs font-cinzel px-3 py-1 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 animate-pulse";
+                badge.innerText = "TIME PORTAL — VICTORY!";
+            }
+        }
+
+        async function rollAndMove() {
+            if (isMoving) return;
+            isMoving = true;
+
+            const rollBtn = document.getElementById('roll-btn');
+            rollBtn.disabled = true;
+            const diceBox = document.getElementById('dice-box');
+
+            document.getElementById('status-text').innerHTML = `<b>Rolling the dice...</b>`;
+            diceBox.classList.add('rolling-dice');
+
+            const rollValue = Math.floor(Math.random() * 6) + 1;
+            for (let i = 0; i < 10; i++) {
+                const tempRoll = Math.floor(Math.random() * 6);
+                diceBox.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[tempRoll]}"></i>`;
+                await new Promise(r => setTimeout(r, 100));
+            }
+
+            diceBox.classList.remove('rolling-dice');
+            diceBox.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[rollValue - 1]}"></i>`;
+
+            document.getElementById('status-text').innerHTML = `Rolled a <b>${rollValue}</b>! Moving forward...`;
+            await new Promise(r => setTimeout(r, 300));
+
+            for (let step = 0; step < rollValue; step++) {
+                if (playerPosition < 45) {
+                    playerPosition++;
+                    renderBoard();
+                    await new Promise(r => setTimeout(r, 220));
+                }
+            }
+
+            isMoving = false;
+            rollBtn.disabled = false;
+
+            openChallengeModal();
+        }
+
+        function openChallengeModal() {
+            const verb = verbs[Math.floor(Math.random() * verbs.length)];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            let era = "Past Simple";
+            let sample = verb.samplePast;
+
+            if (playerPosition <= 15) {
+                era = "Past Simple";
+                sample = verb.samplePast;
+            } else if (playerPosition <= 30) {
+                era = "Present Simple";
+                sample = verb.samplePresent;
+            } else {
+                era = "Future Simple";
+                sample = verb.sampleFuture;
+            }
+
+            currentChallenge = { verb, type, era, sample };
+
+            document.getElementById('modal-era-badge').innerText = `${era} (${type.name})`;
+            document.getElementById('modal-prompt-verb').innerHTML = `Target Verb: <span class="font-bold text-amber-300">${verb.v1.toUpperCase()}</span>`;
+            document.getElementById('modal-prompt-type').innerHTML = `Sentence Type: <span class="font-bold text-amber-400">${type.name}</span>`;
+            
+            document.getElementById('user-sentence').value = "";
+            const feedback = document.getElementById('answer-feedback');
+            feedback.className = "hidden mb-4 p-3 rounded-xl text-xs";
+            feedback.innerHTML = "";
+
+            const modal = document.getElementById('challenge-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function submitSentence() {
+            const userText = document.getElementById('user-sentence').value.trim();
+            const feedback = document.getElementById('answer-feedback');
+            
+            if (!userText) {
+                feedback.className = "mb-4 p-3 rounded-xl text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                feedback.innerText = "Please type a sentence before submitting!";
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            crystals += 1;
+            document.getElementById('crystal-count').innerText = crystals;
+
+            feedback.className = "mb-4 p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Great job! +1 Time Crystal earned.<br><span class="text-amber-100/70">Sample: <i>${currentChallenge.sample}</i></span>`;
+            feedback.classList.remove('hidden');
+
+            setTimeout(() => {
+                closeChallengeModal();
+            }, 1800);
+        }
+
+        function revealSample() {
+            const feedback = document.getElementById('answer-feedback');
+            feedback.className = "mb-4 p-3 rounded-xl text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30";
+            feedback.innerHTML = `<i class="fa-solid fa-lightbulb"></i> Sample Reference: <i>${currentChallenge.sample}</i>`;
+            feedback.classList.remove('hidden');
+        }
+
+        function closeChallengeModal() {
+            const modal = document.getElementById('challenge-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('status-text').innerHTML = `Turn completed! Total Crystals: <b>${crystals}</b>. Roll again to continue!`;
+        }
+
+        function toggleHelpModal() {
+            const modal = document.getElementById('help-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        renderBoard();
+    </script>
+</body>
+</html>
